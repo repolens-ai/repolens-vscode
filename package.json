@@ -132,6 +132,14 @@
 						"completionEvents": [
 							"onCommand:repolens.config.create"
 						]
+					},
+					{
+						"id": "repolens.lineSuggestions",
+						"title": "Use Line Suggestions",
+						"description": "See context-aware suggestions directly on a code line and apply them without leaving your editor.",
+						"media": {
+							"markdown": "walkthrough/line_suggestions.md"
+						}
 					}
 				]
 			}
