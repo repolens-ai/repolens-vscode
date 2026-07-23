@@ -6,7 +6,7 @@
 !out/**
 !package.json
 !repolens-icon.png
-!repolens.py
+!scripts/repolens.py
 !README.md
 !LICENSE
 !media/**

@@ -400,6 +400,8 @@
 	},
 	"main": "./out/extension",
 	"scripts": {
+		"release": "./scripts/release.sh",
+		"release:trigger": "./scripts/release-trigger.sh",
 		"vscode:uninstall": "node ./out/uninstall",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",

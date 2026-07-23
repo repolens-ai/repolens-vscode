@@ -21,18 +21,18 @@ mkdir -p downloaded_binaries/{linux,mac-arm64,mac-x86_64,win}
 rm -rf downloaded_binaries/{linux,mac-arm64,mac-x86_64,win}/*
 
 echo Downloading linux binary
-curl -s -L $( echo $ASSETS | jq -r ".[] | select(.name == \"repolens-$VERSION-linux.tar.gz\") | .browser_download_url" ) \
+curl -s -L $( echo $ASSETS | jq -r ".[] | select(.name == \"repolens-$VERSION-linux-x64.tar.gz\") | .browser_download_url" ) \
   | tar -xz -C downloaded_binaries/linux
 
 echo Downloading mac arm64 binary
-curl -s -L $( echo $ASSETS | jq -r ".[] | select(.name == \"repolens-$VERSION-mac-arm64.tar.gz\") | .browser_download_url" ) \
+curl -s -L $( echo $ASSETS | jq -r ".[] | select(.name == \"repolens-$VERSION-darwin-arm64.tar.gz\") | .browser_download_url" ) \
   | tar -xz -C downloaded_binaries/mac-arm64
 
 echo Downloading mac x86_64 binary
-curl -s -L $( echo $ASSETS | jq -r ".[] | select(.name == \"repolens-$VERSION-mac-x86_64.tar.gz\") | .browser_download_url" ) \
+curl -s -L $( echo $ASSETS | jq -r ".[] | select(.name == \"repolens-$VERSION-darwin-x64.tar.gz\") | .browser_download_url" ) \
   | tar -xz -C downloaded_binaries/mac-x86_64
 
 echo Downloading windows binary
-curl -s -L $( echo $ASSETS | jq -r ".[] | select(.name == \"repolens-$VERSION-win.zip\") | .browser_download_url" ) -o temp.zip
+curl -s -L $( echo $ASSETS | jq -r ".[] | select(.name == \"repolens-$VERSION-win32-x64.zip\") | .browser_download_url" ) -o temp.zip
 unzip temp.zip -d downloaded_binaries/win/
 rm temp.zip

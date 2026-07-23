@@ -49,7 +49,7 @@ jobs:
 
     - name: Update binaries
       run: |
-        ./download-binaries.sh ${{ github.event.inputs.version }}
+        ./scripts/download-binaries.sh ${{ github.event.inputs.version }}
         mkdir -p repolens_binaries/install
         mv downloaded_binaries/${{matrix.dir}} repolens_binaries/install/
 

@@ -41,7 +41,7 @@ jobs:
       env:
         VERSION: ${{ github.event.inputs.version }}
       run: |
-        ./download-binaries.sh "$VERSION"
+        ./scripts/download-binaries.sh "$VERSION"
         mkdir -p repolens_binaries/install
         mv downloaded_binaries/${{matrix.dir}} repolens_binaries/install/
 

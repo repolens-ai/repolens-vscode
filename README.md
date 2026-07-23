@@ -17,7 +17,7 @@ Instant AI code reviews and refactoring in your IDE.
 1. Install the extension from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=repolens.repolens)
 2. Open any Python or JavaScript/TypeScript file
 3. Click the RepoLens logo in the activity bar to login
-4. Open `repolens.py` from the RepoLens sidebar to run through the tutorial
+4. Open `scripts/repolens.py` from the RepoLens sidebar to run through the tutorial
 
 ## Project Structure
 

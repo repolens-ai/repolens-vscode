@@ -46,7 +46,7 @@ function showRepoLensStatusBarItem(context: ExtensionContext) {
 }
 
 function openWelcomeFile(context: ExtensionContext) {
-  openDocument(path.join(context.extensionPath, "repolens.py"));
+  openDocument(path.join(context.extensionPath, "scripts", "repolens.py"));
 }
 
 function openDocument(document_path: string) {
