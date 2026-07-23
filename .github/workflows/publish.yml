@@ -29,7 +29,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        token: ${{ secrets.REPOLENSY_RELEASE_TOKEN }}
+        token: ${{ secrets.ORG_TOKEN }}
 
     - uses: actions/setup-node@v3
       with:
@@ -72,7 +72,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        token: ${{ secrets.REPOLENSY_RELEASE_TOKEN }}
+        token: ${{ secrets.ORG_TOKEN }}
         # always the current branch tip, so a job re-run after a partial
         # failure sees any bump commit the previous attempt already pushed
         ref: main
@@ -111,7 +111,7 @@ jobs:
           git push origin main "v${VERSION}"
         fi
       env:
-        GITHUB_TOKEN: ${{ secrets.REPOLENSY_RELEASE_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.ORG_TOKEN }}
         VERSION: ${{ github.event.inputs.version }}
 
     - name: Download artifacts
@@ -136,7 +136,7 @@ jobs:
         artifacts: 'artifacts/*.vsix'
         artifactContentType: raw
         artifactErrorsFailBuild: true
-        token: ${{ secrets.REPOLENSY_RELEASE_TOKEN }}
+        token: ${{ secrets.ORG_TOKEN }}
 
     - name: Update version number to dev
       run: |
@@ -148,13 +148,4 @@ jobs:
           git push origin main
         fi
       env:
-        GITHUB_TOKEN: ${{ secrets.REPOLENSY_RELEASE_TOKEN }}
-
-    - name: Notify Slack
-      uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: Publish VS Code extension v${{ github.event.inputs.version }} - ${{ job.status }}
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASES_WEBHOOK_URL }}
-      if: always()
+        GITHUB_TOKEN: ${{ secrets.ORG_TOKEN }}
