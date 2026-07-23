@@ -46,8 +46,10 @@ export function getRepoLensConfig(): RepoLensConfig {
 
 export function createLangServer(): LanguageClient {
   const config = getRepoLensConfig();
-  const packageJson = extensions.getExtension("repolens.repolens")
-    ?.packageJSON ?? { version: "unknown" };
+  const extension =
+    extensions.getExtension("KhulnaSoft.repolens-ai") ??
+    extensions.all.find((ext) => ext.id.endsWith(".repolens-ai"));
+  const packageJson = extension?.packageJSON ?? { version: "unknown" };
   const extensionVersion = packageJson.version;
 
   const command = getExecutablePath();

@@ -164,6 +164,30 @@ function registerCommands(
   );
 
   context.subscriptions.push(
+    commands.registerCommand("repolens.rules.focus", async () => {
+      await commands.executeCommand("workbench.view.extension.repolens-explorer");
+      try {
+        await commands.executeCommand("revealView", "repolens.rules");
+      } catch {
+        // Some VS Code versions may not support direct view reveal.
+      }
+    })
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand("repolens.lineSuggestions", () => {
+      commands.executeCommand(
+        "workbench.action.openWalkthrough",
+        "KhulnaSoft.repolens-ai#repolens.walkthrough",
+        true
+      );
+      window.showInformationMessage(
+        "RepoLens line suggestions appear as inline hints and code lens actions when active."
+      );
+    })
+  );
+
+  context.subscriptions.push(
     commands.registerCommand("repolens.scan.toggleAdvanced", () => {
       riProvider.toggle();
     })
@@ -305,7 +329,7 @@ function registerCommands(
       openWelcomeFile(context);
       commands.executeCommand(
         "workbench.action.openWalkthrough",
-        "repolens.repolens#repolens.walkthrough",
+        "KhulnaSoft.repolens-ai#repolens.walkthrough",
         true
       );
     })

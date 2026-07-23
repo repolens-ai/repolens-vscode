@@ -16,7 +16,7 @@ export class RuleInputProvider implements vscode.WebviewViewProvider {
   }
 
   public toggle() {
-    this._view.webview.postMessage({ command: "toggle" });
+    this._view?.webview.postMessage({ command: "toggle" });
   }
 
   public setLanguage(language: string) {
@@ -25,7 +25,7 @@ export class RuleInputProvider implements vscode.WebviewViewProvider {
   }
 
   public setPattern(pattern: string) {
-    this._view.webview.postMessage({ command: "setPattern", pattern: pattern });
+    this._view?.webview.postMessage({ command: "setPattern", pattern: pattern });
   }
 
   public async resolveWebviewView(

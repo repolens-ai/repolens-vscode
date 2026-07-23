@@ -6,6 +6,7 @@ Instant AI code reviews and refactoring in your IDE.
 
 - **Code Reviews** — Review uncommitted changes or entire branches
 - **Refactoring Suggestions** — Inline refactoring with diff preview and one-click apply
+- **Line Suggestions** — Passive, line-by-line advice for quality, readability, and maintainability
 - **Coding Assistant** — Chat-based AI assistant with recipes (docstrings, tests, diagrams, etc.)
 - **Custom Rules** — Pattern-based search/replace across your workspace
 - **Clone Detection** — Find duplicate code across your project
@@ -88,6 +89,7 @@ yarn test-compile  # TypeScript compilation for tests
 - The `Ask RepoLens` quick pick flow is hardened to handle empty or cancelled input gracefully.
 - Rule search webview markup and DOM handling were fixed to prevent broken element selection.
 - Language server configuration sync is centralized through `getRepoLensConfig()` and updates on config changes.
+- Added a new walkthrough step for line suggestions and passive code-quality guidance.
 
 ## Packaging
 

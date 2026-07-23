@@ -136,10 +136,13 @@
 					{
 						"id": "repolens.lineSuggestions",
 						"title": "Use Line Suggestions",
-						"description": "See context-aware suggestions directly on a code line and apply them without leaving your editor.",
+						"description": "See context-aware suggestions directly on a code line and apply them without leaving your editor.\n[Try line suggestions](command:repolens.lineSuggestions)",
 						"media": {
 							"markdown": "walkthrough/line_suggestions.md"
-						}
+						},
+						"completionEvents": [
+							"onCommand:repolens.lineSuggestions"
+						]
 					}
 				]
 			}
