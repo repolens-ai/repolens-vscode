@@ -165,7 +165,9 @@ function registerCommands(
 
   context.subscriptions.push(
     commands.registerCommand("repolens.rules.focus", async () => {
-      await commands.executeCommand("workbench.view.extension.repolens-explorer");
+      await commands.executeCommand(
+        "workbench.view.extension.repolens-explorer"
+      );
       try {
         await commands.executeCommand("revealView", "repolens.rules");
       } catch {

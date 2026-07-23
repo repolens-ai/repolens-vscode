@@ -25,7 +25,10 @@ export class RuleInputProvider implements vscode.WebviewViewProvider {
   }
 
   public setPattern(pattern: string) {
-    this._view?.webview.postMessage({ command: "setPattern", pattern: pattern });
+    this._view?.webview.postMessage({
+      command: "setPattern",
+      pattern: pattern,
+    });
   }
 
   public async resolveWebviewView(
