@@ -29,15 +29,25 @@ function getSafeEnv(): NodeJS.ProcessEnv {
   return safeEnv;
 }
 
+export type RepoLensConfig = {
+  token: string | undefined;
+  showCodeLens: boolean | undefined;
+  suggestFixes: boolean | undefined;
+};
+
+export function getRepoLensConfig(): RepoLensConfig {
+  const configuration = workspace.getConfiguration("repolens");
+  return {
+    token: configuration.get<string>("token"),
+    showCodeLens: configuration.get<boolean>("codeLens"),
+    suggestFixes: configuration.get<boolean>("suggestFixes"),
+  };
+}
+
 export function createLangServer(): LanguageClient {
-  const token = workspace.getConfiguration("repolens").get<string>("token");
-  const showCodeLens = workspace
-    .getConfiguration("repolens")
-    .get<boolean>("codeLens");
-  const suggestFixes = workspace
-    .getConfiguration("repolens")
-    .get<boolean>("suggestFixes");
-  const packageJson = extensions.getExtension("repolens.repolens").packageJSON;
+  const config = getRepoLensConfig();
+  const packageJson = extensions.getExtension("repolens.repolens")
+    ?.packageJSON ?? { version: "unknown" };
   const extensionVersion = packageJson.version;
 
   const command = getExecutablePath();
@@ -67,12 +77,12 @@ export function createLangServer(): LanguageClient {
       configurationSection: "repolens",
     },
     initializationOptions: {
-      token: token,
+      token: config.token,
       editor_version: "vscode " + version,
       extension_version: extensionVersion,
       telemetry_enabled: env.isTelemetryEnabled,
-      show_code_lens: showCodeLens,
-      suggest_ai_fixes: suggestFixes,
+      show_code_lens: config.showCodeLens,
+      suggest_ai_fixes: config.suggestFixes,
     },
   };
 

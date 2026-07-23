@@ -1,7 +1,8 @@
 {
-	"name": "repolens",
-	"displayName": "RepoLens",
+	"name": "repolens-ai",
+	"displayName": "RepoLens AI",
 	"description": "Instant Code Reviews in your IDE",
+	"publisher": "KhulnaSoft",
 	"author": "RepoLens AI",
 	"repository": "https://github.com/repolens-ai/repolens-vscode",
 	"bugs": {
@@ -9,7 +10,6 @@
 	},
 	"license": "MIT",
 	"version": "1.0.1",
-	"publisher": "repolens",
 	"keywords": [
 		"ai",
 		"copilot",

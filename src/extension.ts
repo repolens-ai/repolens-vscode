@@ -32,7 +32,7 @@ import { RuleInputProvider } from "./providers/rule-search";
 import { ScanResultProvider } from "./providers/rule-search-results";
 import { ChatProvider } from "./providers/chat";
 import { askRepoLensCommand } from "./ask-repolens";
-import { createLangServer } from "./lsp/client";
+import { createLangServer, getRepoLensConfig } from "./lsp/client";
 import { getSelectedText } from "./utils/editor";
 import { getLocalIDEState, IDEState } from "./utils/ide-state";
 
@@ -226,17 +226,33 @@ function registerCommands(
   }
 
   context.subscriptions.push(
-    commands.registerCommand("repolens.scan.applyRule", (entry) => {
-      workspace.openTextDocument(entry.resourceUri).then((doc) => {
-        window.showTextDocument(doc).then((e) => {
-          e.revealRange(
-            new Range(entry.startPosition, entry.endPosition),
-            TextEditorRevealType.InCenter
-          );
-          for (let edit of entry.edits) {
-            const workspaceEdit = new vscode.WorkspaceEdit();
+    commands.registerCommand("repolens.scan.applyRule", async (entry) => {
+      const document = await workspace.openTextDocument(entry.resourceUri);
+      const editor = await window.showTextDocument(document);
+      editor.revealRange(
+        new Range(entry.startPosition, entry.endPosition),
+        TextEditorRevealType.InCenter
+      );
 
-            const textEdit = new vscode.TextEdit(
+      if (!entry.edits || entry.edits.length === 0) {
+        vscode.window.showInformationMessage(
+          "No edits were provided for this scan result."
+        );
+        return;
+      }
+
+      const workspaceEdit = new vscode.WorkspaceEdit();
+      const edits = entry.edits
+        .slice()
+        .sort((a, b) => {
+          if (a.range.start.line !== b.range.start.line) {
+            return b.range.start.line - a.range.start.line;
+          }
+          return b.range.start.character - a.range.start.character;
+        })
+        .map(
+          (edit) =>
+            new vscode.TextEdit(
               new vscode.Range(
                 edit.range.start.line,
                 edit.range.start.character,
@@ -244,14 +260,26 @@ function registerCommands(
                 edit.range.end.character
               ),
               edit.newText
-            );
+            )
+        );
 
-            workspaceEdit.set(entry.resourceUri, [textEdit]);
-
-            workspace.applyEdit(workspaceEdit);
-          }
-        });
-      });
+      workspaceEdit.set(entry.resourceUri, edits);
+      try {
+        const applied = await workspace.applyEdit(workspaceEdit);
+        if (applied) {
+          window.showInformationMessage(
+            `Applied ${edits.length} edit(s) to ${document.uri.fsPath}`
+          );
+        } else {
+          window.showErrorMessage("Failed to apply rule edits.");
+        }
+      } catch (error) {
+        window.showErrorMessage(
+          `Error applying rule edits: ${
+            error instanceof Error ? error.message : String(error)
+          }`
+        );
+      }
     })
   );
 
@@ -504,6 +532,11 @@ export function activate(context: ExtensionContext) {
         chatProvider,
         context,
       });
+
+      languageClient.sendNotification(
+        "repolens/configDidChange",
+        getRepoLensConfig()
+      );
     },
     (reason) => {
       window.showErrorMessage(
@@ -515,21 +548,10 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(
     workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration("repolens")) {
-        const token = workspace
-          .getConfiguration("repolens")
-          .get<string>("token");
-        const showCodeLens = workspace
-          .getConfiguration("repolens")
-          .get<boolean>("codeLens");
-        const suggestFixes = workspace
-          .getConfiguration("repolens")
-          .get<boolean>("suggestFixes");
-
-        languageClient.sendNotification("repolens/configDidChange", {
-          token,
-          show_code_lens: showCodeLens,
-          suggest_ai_fixes: suggestFixes,
-        });
+        languageClient.sendNotification(
+          "repolens/configDidChange",
+          getRepoLensConfig()
+        );
       }
     })
   );

@@ -5,21 +5,44 @@
 (function () {
   const vscode = acquireVsCodeApi();
 
-  document.querySelector(".scanner-button").addEventListener("click", () => {
+  const basic = document.querySelector("#patternContainer");
+  const advanced = document.querySelector("#advancedContainer");
+  const patternInput = document.querySelector("textarea.patternInput");
+  const replacementInput = document.querySelector("textarea.replacementInput");
+  const conditionInput = document.querySelector("textarea.conditionInput");
+  const advancedArea = document.querySelector("textarea.ruleInput");
+  const scanButton = document.querySelector(".scanner-button");
+  const saveButton = document.querySelector(".save-button");
+  const replaceButton = document.querySelector(".replace-button");
+
+  if (
+    !basic ||
+    !advanced ||
+    !patternInput ||
+    !replacementInput ||
+    !conditionInput ||
+    !advancedArea ||
+    !scanButton ||
+    !saveButton ||
+    !replaceButton
+  ) {
+    console.error(
+      "RepoLens rule search webview failed to initialize because DOM elements are missing."
+    );
+    return;
+  }
+
+  scanButton.addEventListener("click", () => {
     sendMessageToExtension("scan");
   });
-  document.querySelector(".save-button").addEventListener("click", () => {
+  saveButton.addEventListener("click", () => {
     sendMessageToExtension("save");
   });
-  document.querySelector(".replace-button").addEventListener("click", () => {
+  replaceButton.addEventListener("click", () => {
     sendMessageToExtension("replace");
   });
 
   // Sort the height of the advanced rule input
-  const basic = document.querySelector("#patternContainer");
-  const advanced = document.querySelector("#advancedContainer");
-  const advancedArea = document.querySelector("textarea.ruleInput");
-
   advanced.style.height = basic.offsetHeight + "px";
   advancedArea.style.height = basic.offsetHeight - 15 + "px";
 
@@ -30,37 +53,32 @@
       basic.classList.toggle("hidden");
       advanced.classList.toggle("hidden");
     } else if (message.command === "setPattern") {
-      const input = document.querySelector("textarea.patternInput");
-      input.value = message.pattern;
+      patternInput.value = message.pattern || "";
     }
   });
 
-  const input = document.querySelector("textarea.patternInput");
-  if (input) {
-    input.focus();
-  }
+  patternInput.focus();
 
   // This is handled by the RuleInputProvider
   function sendMessageToExtension(message_type) {
     let rule;
-    let advanced;
+    let advancedMode;
     if (basic.classList.contains("hidden")) {
-      const ruleInput = document.querySelector("textarea.ruleInput");
-      rule = { rule: ruleInput.value };
-      advanced = true;
+      rule = { rule: advancedArea.value };
+      advancedMode = true;
     } else {
-      const replacementInput = document.querySelector(
-        "textarea.replacementInput"
-      );
-      const conditionInput = document.querySelector("textarea.conditionInput");
       rule = {
-        pattern: input.value,
+        pattern: patternInput.value,
         replacement: replacementInput.value,
         condition: conditionInput.value,
       };
-      advanced = false;
+      advancedMode = false;
     }
 
-    vscode.postMessage({ type: message_type, advanced: advanced, rule: rule });
+    vscode.postMessage({
+      type: message_type,
+      advanced: advancedMode,
+      rule: rule,
+    });
   }
 })();

@@ -82,6 +82,13 @@ yarn vscode        # Launch VS Code extension host
 yarn test-compile  # TypeScript compilation for tests
 ```
 
+### Developer notes
+
+- The extension now applies rule-based edits in a safer batch mode and shows success/failure feedback.
+- The `Ask RepoLens` quick pick flow is hardened to handle empty or cancelled input gracefully.
+- Rule search webview markup and DOM handling were fixed to prevent broken element selection.
+- Language server configuration sync is centralized through `getRepoLensConfig()` and updates on config changes.
+
 ## Packaging
 
 ```bash

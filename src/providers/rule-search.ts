@@ -171,24 +171,24 @@ export class RuleInputProvider implements vscode.WebviewViewProvider {
 					<div id="patternContainer">
 						<label for="patternInput">Pattern</label>
 						<textarea
-							class="patternInput""
+							id="patternInput" class="patternInput"
 							nonce="${nonce}"
 						></textarea>
 						<label for="replacementInput">Replacement</label>
 						<textarea
-							class="replacementInput""
+							id="replacementInput" class="replacementInput"
 							nonce="${nonce}"
 						></textarea>
 						<label for="conditionInput">Condition</label>
 						<textarea
-							class="conditionInput""
+							id="conditionInput" class="conditionInput"
 							nonce="${nonce}"
 						></textarea>
 					</div>
 					<div id="advancedContainer" class="hidden">
 						<label for="ruleInput">Rule</label>
 						<textarea
-							class="ruleInput""
+							id="ruleInput" class="ruleInput"
 							placeholder="all:\n- pattern: typing.List\n  replacement: list\n- not:\n    inside:\n      kind: import_from_statement"
 							nonce="${nonce}"
 						></textarea>		
