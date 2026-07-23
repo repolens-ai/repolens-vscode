@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+VERSION=$1
+if [[ -z "$VERSION" ]]; then
+  echo Error: please pass version
+  echo
+  echo Usage: $0 VERSION
+  exit 1
+fi
+
+# Get release asset json
+RELEASES_URL=https://api.github.com/repos/repolens-ai/repolens/releases?per_page=100
+ASSETS=$( curl -s $RELEASES_URL | jq ".[] | select(.tag_name == \"v$VERSION\") | .assets" )
+if [[ -z $ASSETS ]]; then
+  echo Could not find version $VERSION in $RELEASES_URL
+  exit 1
+fi
+
+# Download binaries - directory names match install directories
+mkdir -p downloaded_binaries/{linux,mac-arm64,mac-x86_64,win}
+rm -rf downloaded_binaries/{linux,mac-arm64,mac-x86_64,win}/*
+
+echo Downloading linux binary
+curl -s -L $( echo $ASSETS | jq -r ".[] | select(.name == \"repolens-$VERSION-linux.tar.gz\") | .browser_download_url" ) \
+  | tar -xz -C downloaded_binaries/linux
+
+echo Downloading mac arm64 binary
+curl -s -L $( echo $ASSETS | jq -r ".[] | select(.name == \"repolens-$VERSION-mac-arm64.tar.gz\") | .browser_download_url" ) \
+  | tar -xz -C downloaded_binaries/mac-arm64
+
+echo Downloading mac x86_64 binary
+curl -s -L $( echo $ASSETS | jq -r ".[] | select(.name == \"repolens-$VERSION-mac-x86_64.tar.gz\") | .browser_download_url" ) \
+  | tar -xz -C downloaded_binaries/mac-x86_64
+
+echo Downloading windows binary
+curl -s -L $( echo $ASSETS | jq -r ".[] | select(.name == \"repolens-$VERSION-win.zip\") | .browser_download_url" ) -o temp.zip
+unzip temp.zip -d downloaded_binaries/win/
+rm temp.zip

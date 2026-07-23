@@ -1,0 +1,446 @@
+{
+	"name": "repolens",
+	"displayName": "RepoLens",
+	"description": "Instant Code Reviews in your IDE",
+	"author": "RepoLens AI",
+	"repository": "https://github.com/repolens-ai/repolens-vscode",
+	"bugs": {
+		"url": "https://github.com/repolens-ai/public/issues"
+	},
+	"license": "MIT",
+	"version": "1.0.0-dev",
+	"publisher": "repolens",
+	"keywords": [
+		"ai",
+		"copilot",
+		"code review",
+		"code quality",
+		"tabnine",
+		"python",
+		"javascript",
+		"jupyter",
+		"node.js",
+		"nodejs",
+		"node",
+		"refactor",
+		"refactoring",
+		"review",
+		"typescript"
+	],
+	"engines": {
+		"vscode": "^1.76.0"
+	},
+	"categories": [
+		"AI",
+		"Linters",
+		"Machine Learning",
+		"Other",
+		"Programming Languages",
+		"Snippets"
+	],
+	"activationEvents": [
+		"onLanguage:python",
+		"onStartupFinished"
+	],
+	"contributes": {
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "repolens-explorer",
+					"title": "RepoLens",
+					"icon": "repolens-icon.png"
+				}
+			]
+		},
+		"views": {
+			"repolens-explorer": [
+				{
+					"id": "repolens.chat",
+					"name": "RepoLens",
+					"type": "webview",
+					"icon": "repolens-icon.png",
+					"contextualTitle": "RepoLens"
+				},
+				{
+					"id": "repolens.rules",
+					"name": "Rules",
+					"type": "webview",
+					"icon": "repolens-icon.png",
+					"contextualTitle": "Rules",
+					"when": "repolensRulesActive"
+				},
+				{
+					"id": "repolens.rules.treeview",
+					"name": "Results",
+					"contextualTitle": "Results",
+					"when": "repolensRulesActive"
+				}
+			]
+		},
+		"walkthroughs": [
+			{
+				"id": "repolens.walkthrough",
+				"title": "Get started with RepoLens",
+				"description": "Your first steps to try out the powerful tools and features that the RepoLens extension has to offer!",
+				"when": "workspacePlatform != webworker",
+				"steps": [
+					{
+						"id": "repolens.login",
+						"title": "Login",
+						"description": "Unlock all of RepoLens's features, including a 14 day trial of RepoLens Pro\n[Login](command:repolens.login)",
+						"media": {
+							"markdown": "walkthrough/login.md"
+						},
+						"completionEvents": [
+							"onContext:repolens.is_authenticated"
+						]
+					},
+					{
+						"id": "repolens.openWelcomeFile",
+						"title": "Explore RepoLens",
+						"description": "Get started by opening our tutorial \n[Open tutorial](command:toSide:repolens.welcome.open)\n This will show you how to get code reviews straight in your IDE, as well as use the chat to ask questions \n You can enable or disable the RepoLens Code Lenses above code for easy access. \n[Toggle Code Lens](command:repolens.chat.toggleCodeLens)\n",
+						"media": {
+							"markdown": "walkthrough/view_welcome_file.md"
+						},
+						"completionEvents": [
+							"onCommand:repolens.welcome.open"
+						]
+					},
+					{
+						"id": "repolens.acceptRecommendation",
+						"title": "Get Feedback on Your Current Changes",
+						"description": "Get an instant code review of your current branch or your uncommitted changes to get the type of feedback you expect from a peer review in seconds.",
+						"media": {
+							"markdown": "walkthrough/code_reviews.md"
+						}
+					},
+					{
+						"id": "repolens.githubCodeReviews",
+						"title": "Review Your PRs with RepoLens",
+						"description": "Add RepoLens to your GitHub repos to get instant, in depth code reviews on every pull request.\n[Add to GitHub](https://github.com/apps/repolens-ai/installations/new)\n",
+						"media": {
+							"markdown": "walkthrough/github_code_reviews.md"
+						}
+					},
+					{
+						"id": "repolens.configuration",
+						"title": "Configure RepoLens to your needs.",
+						"description": "Create a configuration file in your project to customise RepoLens.\n[Create config file](command:toSide:repolens.config.create)\nA very useful setting to start with is the Python version, which lets you tell RepoLens which version you are using.",
+						"media": {
+							"markdown": "walkthrough/configuration.md"
+						},
+						"completionEvents": [
+							"onCommand:repolens.config.create"
+						]
+					}
+				]
+			}
+		],
+		"viewsWelcome": [
+			{
+				"view": "repolens.rules.treeview",
+				"contents": "Use this view to perform powerful pattern based search/replace of your codebase using RepoLens's rule syntax.\n[Documentation](https://repolens-ai.github.io/docs/Reference/Custom-Rules/pattern-syntax/#custom-rule-pattern-syntax)\n"
+			}
+		],
+		"commands": [
+			{
+				"command": "repolens.login",
+				"title": "Login via browser",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.login.choose",
+				"title": "Login",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.hub.start",
+				"title": "Open RepoLens Analytics",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.walkthrough.open",
+				"title": "Open Walkthough",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.welcome.open",
+				"title": "Open welcome file",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.refactor.workspace",
+				"title": "Scan for refactorings",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.scan.rule",
+				"title": "Scan with specific rule",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.scan.applyRule",
+				"title": "Apply specific change from rule",
+				"category": "RepoLens",
+				"icon": "$(replace)"
+			},
+			{
+				"command": "repolens.scan.open",
+				"title": "Search and Replace across workspace",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.clones.workspace",
+				"title": "Detect clones",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.config.create",
+				"title": "Create a default RepoLens configuration file for your project",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.scan.toggleAdvanced",
+				"title": "Toggle Advanced Mode",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.chat.ask",
+				"title": "Ask RepoLens",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.chat.toggleCodeLens",
+				"title": "Toggle Code Lens for Coding Assistant",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.scan.selectLanguage",
+				"title": "Select Language",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.rule.create",
+				"title": "Create custom rule",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.effects.enable",
+				"title": "Show Effects",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.effects.disable",
+				"title": "Hide Effects",
+				"category": "RepoLens"
+			},
+			{
+				"command": "repolens.review",
+				"title": "Review",
+				"category": "RepoLens"
+			}
+		],
+		"submenus": [
+			{
+				"id": "repolens.scans",
+				"label": "RepoLens"
+			},
+			{
+				"id": "repolens.editor",
+				"label": "RepoLens"
+			}
+		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "repolens.scan.selectLanguage",
+					"when": "view == repolens.rules",
+					"group": "navigation"
+				},
+				{
+					"command": "repolens.scan.toggleAdvanced",
+					"when": "view == repolens.rules",
+					"group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "repolens.scan.applyRule",
+					"when": "view == repolens.rules.treeview && viewItem == editable",
+					"group": "inline"
+				}
+			],
+			"editor/context": [
+				{
+					"submenu": "repolens.editor",
+					"group": "1_modification@2"
+				}
+			],
+			"explorer/context": [
+				{
+					"submenu": "repolens.scans",
+					"group": "1_modification@1"
+				}
+			],
+			"repolens.editor": [
+				{
+					"command": "repolens.scan.open",
+					"title": "Create RepoLens rule with this pattern",
+					"when": "editorLangId==python && editorHasSelection"
+				},
+				{
+					"command": "repolens.chat.ask",
+					"title": "Ask RepoLens",
+					"when": "editorHasSelection && repolens.features.coding_assistant"
+				}
+			],
+			"repolens.scans": [
+				{
+					"command": "repolens.refactor.workspace",
+					"group": "1_modification@1",
+					"when": "resourceLangId == python || explorerResourceIsFolder"
+				},
+				{
+					"command": "repolens.clones.workspace",
+					"group": "1_modification@2",
+					"when": "resourceLangId == python || explorerResourceIsFolder"
+				}
+			],
+			"commandPalette": [
+				{
+					"command": "repolens.login",
+					"when": "false"
+				},
+				{
+					"command": "repolens.refactor.workspace",
+					"when": "false"
+				},
+				{
+					"command": "repolens.scan.rule",
+					"when": "false"
+				},
+				{
+					"command": "repolens.clones.workspace",
+					"when": "false"
+				},
+				{
+					"command": "repolens.scan.applyRule",
+					"when": "false"
+				},
+				{
+					"command": "repolens.scan.toggleAdvanced",
+					"when": "false"
+				},
+				{
+					"command": "repolens.chat.ask",
+					"when": "repolens.features.coding_assistant"
+				},
+				{
+					"command": "repolens.scan.selectLanguage",
+					"when": "false"
+				},
+				{
+					"command": "repolens.rule.create",
+					"when": "false"
+				},
+				{
+					"command": "repolens.effects.enable",
+					"when": "repolens.features.code_understanding && !repolens.effects.enabled"
+				},
+				{
+					"command": "repolens.effects.disable",
+					"when": "repolens.features.code_understanding && repolens.effects.enabled"
+				}
+			]
+		},
+		"configuration": {
+			"title": "RepoLens Configuration",
+			"type": "object",
+			"properties": {
+				"repolens.token": {
+					"type": "string",
+					"default": "",
+					"description": "RepoLens token. You can find your token at https://repolens.ai/dashboard"
+				},
+				"repolens.codeLens": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show code lens for RepoLens's coding assistant."
+				},
+				"repolens.suggestFixes": {
+					"type": "boolean",
+					"default": true,
+					"description": "Suggest AI fixes for all problems."
+				},
+				"repolens.ruleType.refactorings": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show refactorings."
+				},
+				"repolens.ruleType.suggestions": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show suggestions."
+				},
+				"repolens.ruleType.comments": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show comments."
+				}
+			}
+		},
+		"keybindings": [
+			{
+				"command": "repolens.chat.ask",
+				"key": "ctrl+shift+y",
+				"mac": "cmd+y",
+				"when": "editorTextFocus"
+			}
+		]
+	},
+	"main": "./out/extension",
+	"scripts": {
+		"vscode:uninstall": "node ./out/uninstall",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"vscode": "yarn vscode:prepublish && VSCODE=$(which code-insiders || which code || echo echo ERROR: neither the code nor code-insiders vscode executable is installed); USER=dummy-dont-share-vscode-instance \"$VSCODE\" --user-data-dir=$PWD/.vscode-dev/user-data --verbose --extensionHomePath=$PWD/.vscode-dev/extensions --extensionDevelopmentPath=$PWD $*",
+		"vscode_local": "REPOLENSY_EXECUTABLE=../core/run-repolens.sh yarn run vscode",
+		"format": "prettier --write .",
+		"lint:format": "prettier --check .",
+		"vscode:prepublish": "yarn esbuild-base -- --minify",
+		"esbuild-base": "esbuild ./src/extension.ts ./src/uninstall.ts --bundle --outdir=out --external:vscode --format=cjs --platform=node",
+		"esbuild": "yarn esbuild-base -- --sourcemap",
+		"esbuild-watch": "yarn esbuild-base -- --sourcemap --watch",
+		"test-compile": "tsc -p ./"
+	},
+	"devDependencies": {
+		"@types/marked": "^5.0.0",
+		"@types/mocha": "^10.0.1",
+		"@types/node": "^18.15.1",
+		"@types/vscode": "^1.76.0",
+		"@typescript-eslint/eslint-plugin": "^5.55.0",
+		"@typescript-eslint/parser": "^5.55.0",
+		"@vscode/vsce": "^2.18.0",
+		"esbuild": "^0.18.10",
+		"eslint": "^8.36.0",
+		"mocha": "^10.2.0",
+		"ovsx": "^0.8.0",
+		"prettier": "^2.7.1",
+		"typescript": "^4.9.5",
+		"version-bump-prompt": "^6.1.0",
+		"vscode-test": "^1.6.1"
+	},
+	"dependencies": {
+		"highlight.js": "^11.8.0",
+		"marked": "^5.1.0",
+		"marked-highlight": "^2.0.1",
+		"sanitize-html": "^2.11.0",
+		"vscode-languageclient": "^8.1.0"
+	},
+	"__metadata": {
+		"id": "0bb8a841-96c3-4e2d-ab43-cffee71480a4",
+		"publisherDisplayName": "repolens",
+		"publisherId": "076dffab-0485-4bcd-bc6c-62c3a0c7502a",
+		"isPreReleaseVersion": false
+	}
+}

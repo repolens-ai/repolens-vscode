@@ -1,0 +1,22 @@
+:root {
+  --ide-text: var(--vscode-sideBar-foreground);
+  --ide-disabled-text: var(--vscode-disabledForeground);
+  --ide-window-bg: var(--vscode-sideBar-background);
+  --ide-editor-bg: var(--vscode-editor-background);
+  --ide-chat-input-text: var(--vscode-settings-textInputForeground);
+  --ide-chat-input-bg: var(--vscode-settings-textInputBackground);
+  --ide-warning-text: var(--vscode-statusBarItem-warningForeground);
+  --ide-warning-bg: var(--vscode-statusBarItem-warningBackground);
+  --ide-error-text: var(--vscode-inputValidation-errorForeground);
+  --ide-error-bg: var(--vscode-inputValidation-errorBackground);
+  --ide-border: var(--vscode-panel-border);
+  --ide-primary-btn-text: var(--vscode-button-foreground);
+  --ide-primary-btn-bg: var(--vscode-button-background);
+  --ide-primary-btn-border: var(--vscode-button-border);
+
+  --ide-highlight: orange;
+}
+
+html {
+  font-size: var(--vscode-font-size);
+}

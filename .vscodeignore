@@ -1,0 +1,14 @@
+
+*
+*/**
+**/.DS_Store
+!repolens_binaries/**
+!out/**
+!package.json
+!repolens-icon.png
+!repolens.py
+!README.md
+!LICENSE
+!media/**
+!src/webview/**
+!walkthrough/**

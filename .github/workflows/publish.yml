@@ -1,0 +1,160 @@
+name: Publish VSIX
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release'
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  package-vsix:
+    strategy:
+      matrix:
+        include:
+          - target: win32-x64
+            dir: win
+          - target: linux-x64
+            dir: linux
+          - target: darwin-x64
+            dir: mac-x86_64
+          - target: darwin-arm64
+            dir: mac-arm64
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.REPOLENSY_RELEASE_TOKEN }}
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: latest
+
+    - run: yarn install --frozen-lockfile
+
+    - name: Update binaries
+      env:
+        VERSION: ${{ github.event.inputs.version }}
+      run: |
+        ./download-binaries.sh "$VERSION"
+        mkdir -p repolens_binaries/install
+        mv downloaded_binaries/${{matrix.dir}} repolens_binaries/install/
+
+    - name: Update version number
+      env:
+        VERSION: ${{ github.event.inputs.version }}
+      run: yarn run bump "$VERSION"
+
+    - name: Package VSCode extension
+      run: yarn run vsce package --target ${{matrix.target}}
+
+    - name: Rename packaged VSIX file
+      env:
+        VERSION: ${{ github.event.inputs.version }}
+      run: mv repolens-*.vsix "repolens-${VERSION}-${{ matrix.target }}.vsix"
+
+    - name: Upload archive
+      uses: actions/upload-artifact@v4
+      with:
+        path: '*.vsix'
+        name: repolens-${{ github.event.inputs.version }}-${{ matrix.target }}
+
+
+  publish-vsix:
+    runs-on: ubuntu-latest
+    needs: package-vsix
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.REPOLENSY_RELEASE_TOKEN }}
+        # always the current branch tip, so a job re-run after a partial
+        # failure sees any bump commit the previous attempt already pushed
+        ref: main
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: latest
+
+    - run: yarn install --frozen-lockfile
+
+    - name: Update version number
+      env:
+        VERSION: ${{ github.event.inputs.version }}
+      run: yarn run bump "$VERSION"
+
+    - name: Commit to main, create tag, and push
+      run: |
+        git add .
+        git config --global user.name ${{ github.actor }}
+        git config --global user.email ${{ github.actor }}@users.noreply.github.com
+        if git diff --cached --quiet; then
+          echo "Version files unchanged - skipping commit on re-run"
+        else
+          git commit -m "Update version number to v${VERSION}"
+        fi
+        TAG_SHA=$(git ls-remote --tags origin "refs/tags/v${VERSION}" | cut -f1)
+        if [ -n "$TAG_SHA" ]; then
+          if [ "$TAG_SHA" != "$(git rev-parse HEAD)" ]; then
+            echo "Tag v${VERSION} already exists but points at ${TAG_SHA}, not the release commit $(git rev-parse HEAD) - move or delete the tag before re-running"
+            exit 1
+          fi
+          echo "Tag v${VERSION} already exists - pushing main only"
+          git push origin main
+        else
+          git tag "v${VERSION}"
+          git push origin main "v${VERSION}"
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.REPOLENSY_RELEASE_TOKEN }}
+        VERSION: ${{ github.event.inputs.version }}
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        merge-multiple: true
+        path: artifacts
+
+
+    - name: Package and publish VSCode extension
+      run: |
+        yarn run vsce publish --packagePath $(find . -iname *.vsix) -p ${{ secrets.VSCE_TOKEN }}
+        yarn run ovsx publish --packagePath $(find . -iname *.vsix) -p ${{ secrets.OPEN_VSX_TOKEN }}
+
+    - name: Create release
+      uses: ncipollo/release-action@v1
+      with:
+        tag: v${{ github.event.inputs.version }}
+        name: RepoLens ${{ github.event.inputs.version }}
+        body: v${{ github.event.inputs.version }}
+        prerelease: false
+        artifacts: 'artifacts/*.vsix'
+        artifactContentType: raw
+        artifactErrorsFailBuild: true
+        token: ${{ secrets.REPOLENSY_RELEASE_TOKEN }}
+
+    - name: Update version number to dev
+      run: |
+        yarn run bump prepatch --preid dev
+        if git diff --quiet; then
+          echo "Version files unchanged - skipping commit on re-run"
+        else
+          git commit -am 'Bump version to dev'
+          git push origin main
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.REPOLENSY_RELEASE_TOKEN }}
+
+    - name: Notify Slack
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: Publish VS Code extension v${{ github.event.inputs.version }} - ${{ job.status }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASES_WEBHOOK_URL }}
+      if: always()
